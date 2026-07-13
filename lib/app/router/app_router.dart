@@ -34,7 +34,11 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.editFlashcard,
       name: AppRouteNames.editFlashcard,
-      builder: (context, state) => const EditFlashcardPage(),
+      builder: (context, state) {
+        final flashcardId = int.tryParse(state.pathParameters['id'] ?? '');
+
+        return EditFlashcardPage(flashcardId: flashcardId ?? -1);
+      },
     ),
     GoRoute(
       path: AppRoutes.settings,
@@ -54,7 +58,7 @@ abstract final class AppRoutes {
   static const String home = '/home';
   static const String study = '/study';
   static const String addFlashcard = '/flashcards/add';
-  static const String editFlashcard = '/flashcards/edit';
+  static const String editFlashcard = '/flashcards/edit/:id';
   static const String settings = '/settings';
   static const String about = '/about';
 }
