@@ -15,7 +15,7 @@ class HomePage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flashcard Quiz App'),
+        title: const Text('Flashcards'),
         actions: [
           IconButton(
             onPressed: () => context.push(AppRoutes.study),
@@ -25,8 +25,7 @@ class HomePage extends ConsumerWidget {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () =>
-            ref.read(flashcardNotifierProvider.notifier).refresh(),
+        onRefresh: () => ref.read(flashcardNotifierProvider.notifier).refresh(),
         child: flashcardsState.when(
           data: (flashcards) => _FlashcardList(flashcards: flashcards),
           error: (error, stackTrace) => _ErrorView(
@@ -58,11 +57,16 @@ class _FlashcardList extends ConsumerWidget {
     }
 
     return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
-      itemCount: flashcards.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 104),
+      itemCount: flashcards.length + 1,
+      separatorBuilder: (context, index) => const SizedBox(height: 14),
       itemBuilder: (context, index) {
-        final flashcard = flashcards[index];
+        if (index == 0) {
+          return _DashboardHeader(count: flashcards.length);
+        }
+
+        final flashcardIndex = index - 1;
+        final flashcard = flashcards[flashcardIndex];
 
         return FlashcardCard(
           flashcard: flashcard,
@@ -113,14 +117,81 @@ class _FlashcardList extends ConsumerWidget {
     final messenger = ScaffoldMessenger.of(context);
 
     if (state.hasError) {
-      messenger.showSnackBar(
-        SnackBar(content: Text(state.error.toString())),
-      );
+      messenger.showSnackBar(SnackBar(content: Text(state.error.toString())));
       return;
     }
 
-    messenger.showSnackBar(
-      const SnackBar(content: Text('Flashcard deleted.')),
+    messenger.showSnackBar(const SnackBar(content: Text('Flashcard deleted.')));
+  }
+}
+
+class _DashboardHeader extends StatelessWidget {
+  const _DashboardHeader({required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        color: colorScheme.primaryContainer,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Flashcard Quiz App',
+                  style: textTheme.headlineSmall?.copyWith(
+                    color: colorScheme.onPrimaryContainer,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Build momentum with quick, focused review sessions.',
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onPrimaryContainer.withValues(
+                      alpha: 0.78,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: colorScheme.surface.withValues(alpha: 0.72),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  '$count',
+                  style: textTheme.headlineSmall?.copyWith(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                Text(
+                  count == 1 ? 'card' : 'cards',
+                  style: textTheme.labelMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -130,11 +201,41 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return ListView(
+      padding: const EdgeInsets.all(24),
       children: [
-        SizedBox(height: MediaQuery.sizeOf(context).height * 0.25),
-        const Center(
-          child: Text('No flashcards yet'),
+        SizedBox(height: MediaQuery.sizeOf(context).height * 0.18),
+        Center(
+          child: Container(
+            width: 92,
+            height: 92,
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(28),
+            ),
+            child: Icon(
+              Icons.auto_stories_outlined,
+              size: 42,
+              color: colorScheme.onPrimaryContainer,
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+        Text(
+          'No flashcards yet',
+          textAlign: TextAlign.center,
+          style: textTheme.headlineSmall,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Add your first question and answer to start studying.',
+          textAlign: TextAlign.center,
+          style: textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );
@@ -142,20 +243,21 @@ class _EmptyState extends StatelessWidget {
 }
 
 class _ErrorView extends StatelessWidget {
-  const _ErrorView({
-    required this.message,
-    required this.onRetry,
-  });
+  const _ErrorView({required this.message, required this.onRetry});
 
   final String message;
   final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        const SizedBox(height: 120),
+        const SizedBox(height: 96),
+        Icon(Icons.error_outline, size: 48, color: colorScheme.error),
+        const SizedBox(height: 16),
         Text(
           message,
           textAlign: TextAlign.center,
@@ -163,10 +265,7 @@ class _ErrorView extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Center(
-          child: FilledButton(
-            onPressed: onRetry,
-            child: const Text('Retry'),
-          ),
+          child: FilledButton(onPressed: onRetry, child: const Text('Retry')),
         ),
       ],
     );
