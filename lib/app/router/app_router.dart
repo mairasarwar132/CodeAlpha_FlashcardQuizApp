@@ -4,18 +4,13 @@ import 'package:codealpha_flashcard_quiz_app/features/flashcards/presentation/pa
 import 'package:codealpha_flashcard_quiz_app/features/flashcards/presentation/pages/edit_flashcard_page.dart';
 import 'package:codealpha_flashcard_quiz_app/features/flashcards/presentation/pages/home_page.dart';
 import 'package:codealpha_flashcard_quiz_app/features/flashcards/presentation/pages/settings_page.dart';
-import 'package:codealpha_flashcard_quiz_app/features/flashcards/presentation/pages/splash_page.dart';
 import 'package:codealpha_flashcard_quiz_app/features/flashcards/presentation/pages/study_page.dart';
 import 'package:go_router/go_router.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: AppRoutes.splash,
+  initialLocation: AppRoutes.home,
+  overridePlatformDefaultLocation: true,
   routes: <RouteBase>[
-    GoRoute(
-      path: AppRoutes.splash,
-      name: AppRouteNames.splash,
-      builder: (context, state) => const SplashPage(),
-    ),
     GoRoute(
       path: AppRoutes.home,
       name: AppRouteNames.home,
@@ -54,7 +49,6 @@ final GoRouter appRouter = GoRouter(
 );
 
 abstract final class AppRoutes {
-  static const String splash = '/';
   static const String home = '/home';
   static const String study = '/study';
   static const String addFlashcard = '/flashcards/add';
@@ -64,7 +58,6 @@ abstract final class AppRoutes {
 }
 
 abstract final class AppRouteNames {
-  static const String splash = AppStrings.splashTitle;
   static const String home = AppStrings.homeTitle;
   static const String study = AppStrings.studyTitle;
   static const String addFlashcard = AppStrings.addFlashcardTitle;
