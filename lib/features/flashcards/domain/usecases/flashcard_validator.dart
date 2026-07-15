@@ -22,4 +22,14 @@ class FlashcardValidator {
 
     return trimmedValue;
   }
+
+  String category(String value) {
+    final trimmedValue = value.trim();
+
+    if (trimmedValue.isEmpty) {
+      return 'General';
+    }
+
+    return trimmedValue;
+  }
 }

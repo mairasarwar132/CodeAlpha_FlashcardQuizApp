@@ -11,11 +11,18 @@ class AddFlashcard {
   final FlashcardRepository _repository;
   final FlashcardValidator _validator;
 
-  Future<int> call({required String question, required String answer}) {
+  Future<int> call({
+    required String question,
+    required String answer,
+    String category = 'General',
+    bool isFavorite = false,
+  }) {
     final now = DateTime.now();
     final flashcard = FlashcardEntity(
       question: _validator.question(question),
       answer: _validator.answer(answer),
+      category: _validator.category(category),
+      isFavorite: isFavorite,
       createdAt: now,
       updatedAt: now,
     );

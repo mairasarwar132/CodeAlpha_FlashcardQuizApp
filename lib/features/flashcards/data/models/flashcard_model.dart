@@ -7,6 +7,8 @@ class FlashcardModel extends FlashcardEntity {
     super.id,
     required super.question,
     required super.answer,
+    super.category,
+    super.isFavorite,
     required super.createdAt,
     required super.updatedAt,
   });
@@ -16,6 +18,8 @@ class FlashcardModel extends FlashcardEntity {
       id: entity.id,
       question: entity.question,
       answer: entity.answer,
+      category: entity.category,
+      isFavorite: entity.isFavorite,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
     );
@@ -26,6 +30,8 @@ class FlashcardModel extends FlashcardEntity {
       id: record.id,
       question: record.question,
       answer: record.answer,
+      category: record.category,
+      isFavorite: record.isFavorite,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
     );
@@ -36,6 +42,8 @@ class FlashcardModel extends FlashcardEntity {
       id: id,
       question: question,
       answer: answer,
+      category: category,
+      isFavorite: isFavorite,
       createdAt: createdAt,
       updatedAt: updatedAt,
     );
@@ -46,6 +54,8 @@ class FlashcardModel extends FlashcardEntity {
       id: includeId && id != null ? Value(id!) : const Value.absent(),
       question: Value(question),
       answer: Value(answer),
+      category: Value(category),
+      isFavorite: Value(isFavorite),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );

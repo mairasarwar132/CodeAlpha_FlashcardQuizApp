@@ -36,11 +36,18 @@ class FlashcardNotifier extends AsyncNotifier<List<FlashcardEntity>> {
   Future<void> addFlashcard({
     required String question,
     required String answer,
+    required String category,
+    required bool isFavorite,
   }) {
     return _mutateAndRefresh(
       () => ref
           .read(addFlashcardProvider)
-          .call(question: question, answer: answer),
+          .call(
+            question: question,
+            answer: answer,
+            category: category,
+            isFavorite: isFavorite,
+          ),
     );
   }
 
@@ -52,6 +59,20 @@ class FlashcardNotifier extends AsyncNotifier<List<FlashcardEntity>> {
 
   Future<void> deleteFlashcard(int id) {
     return _mutateAndRefresh(() => ref.read(deleteFlashcardProvider).call(id));
+  }
+
+  Future<void> toggleFavorite(FlashcardEntity flashcard) {
+    return updateFlashcard(
+      FlashcardEntity(
+        id: flashcard.id,
+        question: flashcard.question,
+        answer: flashcard.answer,
+        category: flashcard.category,
+        isFavorite: !flashcard.isFavorite,
+        createdAt: flashcard.createdAt,
+        updatedAt: DateTime.now(),
+      ),
+    );
   }
 
   Future<List<FlashcardEntity>> _loadFlashcards() {

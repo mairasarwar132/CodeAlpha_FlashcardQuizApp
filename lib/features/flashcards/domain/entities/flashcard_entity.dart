@@ -5,6 +5,8 @@ class FlashcardEntity extends Equatable {
     this.id,
     required this.question,
     required this.answer,
+    this.category = 'General',
+    this.isFavorite = false,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -12,9 +14,19 @@ class FlashcardEntity extends Equatable {
   final int? id;
   final String question;
   final String answer;
+  final String category;
+  final bool isFavorite;
   final DateTime createdAt;
   final DateTime updatedAt;
 
   @override
-  List<Object?> get props => [id, question, answer, createdAt, updatedAt];
+  List<Object?> get props => [
+    id,
+    question,
+    answer,
+    category,
+    isFavorite,
+    createdAt,
+    updatedAt,
+  ];
 }

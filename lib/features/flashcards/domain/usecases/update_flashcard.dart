@@ -23,6 +23,8 @@ class UpdateFlashcard {
       id: id,
       question: _validator.question(flashcard.question),
       answer: _validator.answer(flashcard.answer),
+      category: _validator.category(flashcard.category),
+      isFavorite: flashcard.isFavorite,
       createdAt: flashcard.createdAt,
       updatedAt: DateTime.now(),
     );

@@ -42,6 +42,33 @@ class $FlashcardsTableTable extends FlashcardsTable
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _categoryMeta = const VerificationMeta(
+    'category',
+  );
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+    'category',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('General'),
+  );
+  static const VerificationMeta _isFavoriteMeta = const VerificationMeta(
+    'isFavorite',
+  );
+  @override
+  late final GeneratedColumn<bool> isFavorite = GeneratedColumn<bool>(
+    'is_favorite',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_favorite" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -69,6 +96,8 @@ class $FlashcardsTableTable extends FlashcardsTable
     id,
     question,
     answer,
+    category,
+    isFavorite,
     createdAt,
     updatedAt,
   ];
@@ -102,6 +131,18 @@ class $FlashcardsTableTable extends FlashcardsTable
       );
     } else if (isInserting) {
       context.missing(_answerMeta);
+    }
+    if (data.containsKey('category')) {
+      context.handle(
+        _categoryMeta,
+        category.isAcceptableOrUnknown(data['category']!, _categoryMeta),
+      );
+    }
+    if (data.containsKey('is_favorite')) {
+      context.handle(
+        _isFavoriteMeta,
+        isFavorite.isAcceptableOrUnknown(data['is_favorite']!, _isFavoriteMeta),
+      );
     }
     if (data.containsKey('created_at')) {
       context.handle(
@@ -140,6 +181,14 @@ class $FlashcardsTableTable extends FlashcardsTable
         DriftSqlType.string,
         data['${effectivePrefix}answer'],
       )!,
+      category: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category'],
+      )!,
+      isFavorite: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_favorite'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -161,12 +210,16 @@ class FlashcardRecord extends DataClass implements Insertable<FlashcardRecord> {
   final int id;
   final String question;
   final String answer;
+  final String category;
+  final bool isFavorite;
   final DateTime createdAt;
   final DateTime updatedAt;
   const FlashcardRecord({
     required this.id,
     required this.question,
     required this.answer,
+    required this.category,
+    required this.isFavorite,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -176,6 +229,8 @@ class FlashcardRecord extends DataClass implements Insertable<FlashcardRecord> {
     map['id'] = Variable<int>(id);
     map['question'] = Variable<String>(question);
     map['answer'] = Variable<String>(answer);
+    map['category'] = Variable<String>(category);
+    map['is_favorite'] = Variable<bool>(isFavorite);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
@@ -186,6 +241,8 @@ class FlashcardRecord extends DataClass implements Insertable<FlashcardRecord> {
       id: Value(id),
       question: Value(question),
       answer: Value(answer),
+      category: Value(category),
+      isFavorite: Value(isFavorite),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -200,6 +257,8 @@ class FlashcardRecord extends DataClass implements Insertable<FlashcardRecord> {
       id: serializer.fromJson<int>(json['id']),
       question: serializer.fromJson<String>(json['question']),
       answer: serializer.fromJson<String>(json['answer']),
+      category: serializer.fromJson<String>(json['category']),
+      isFavorite: serializer.fromJson<bool>(json['isFavorite']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -211,6 +270,8 @@ class FlashcardRecord extends DataClass implements Insertable<FlashcardRecord> {
       'id': serializer.toJson<int>(id),
       'question': serializer.toJson<String>(question),
       'answer': serializer.toJson<String>(answer),
+      'category': serializer.toJson<String>(category),
+      'isFavorite': serializer.toJson<bool>(isFavorite),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -220,12 +281,16 @@ class FlashcardRecord extends DataClass implements Insertable<FlashcardRecord> {
     int? id,
     String? question,
     String? answer,
+    String? category,
+    bool? isFavorite,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => FlashcardRecord(
     id: id ?? this.id,
     question: question ?? this.question,
     answer: answer ?? this.answer,
+    category: category ?? this.category,
+    isFavorite: isFavorite ?? this.isFavorite,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -234,6 +299,10 @@ class FlashcardRecord extends DataClass implements Insertable<FlashcardRecord> {
       id: data.id.present ? data.id.value : this.id,
       question: data.question.present ? data.question.value : this.question,
       answer: data.answer.present ? data.answer.value : this.answer,
+      category: data.category.present ? data.category.value : this.category,
+      isFavorite: data.isFavorite.present
+          ? data.isFavorite.value
+          : this.isFavorite,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -245,6 +314,8 @@ class FlashcardRecord extends DataClass implements Insertable<FlashcardRecord> {
           ..write('id: $id, ')
           ..write('question: $question, ')
           ..write('answer: $answer, ')
+          ..write('category: $category, ')
+          ..write('isFavorite: $isFavorite, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -252,7 +323,15 @@ class FlashcardRecord extends DataClass implements Insertable<FlashcardRecord> {
   }
 
   @override
-  int get hashCode => Object.hash(id, question, answer, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+    id,
+    question,
+    answer,
+    category,
+    isFavorite,
+    createdAt,
+    updatedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -260,6 +339,8 @@ class FlashcardRecord extends DataClass implements Insertable<FlashcardRecord> {
           other.id == this.id &&
           other.question == this.question &&
           other.answer == this.answer &&
+          other.category == this.category &&
+          other.isFavorite == this.isFavorite &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -268,12 +349,16 @@ class FlashcardsTableCompanion extends UpdateCompanion<FlashcardRecord> {
   final Value<int> id;
   final Value<String> question;
   final Value<String> answer;
+  final Value<String> category;
+  final Value<bool> isFavorite;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   const FlashcardsTableCompanion({
     this.id = const Value.absent(),
     this.question = const Value.absent(),
     this.answer = const Value.absent(),
+    this.category = const Value.absent(),
+    this.isFavorite = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
@@ -281,6 +366,8 @@ class FlashcardsTableCompanion extends UpdateCompanion<FlashcardRecord> {
     this.id = const Value.absent(),
     required String question,
     required String answer,
+    this.category = const Value.absent(),
+    this.isFavorite = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
   }) : question = Value(question),
@@ -291,6 +378,8 @@ class FlashcardsTableCompanion extends UpdateCompanion<FlashcardRecord> {
     Expression<int>? id,
     Expression<String>? question,
     Expression<String>? answer,
+    Expression<String>? category,
+    Expression<bool>? isFavorite,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
   }) {
@@ -298,6 +387,8 @@ class FlashcardsTableCompanion extends UpdateCompanion<FlashcardRecord> {
       if (id != null) 'id': id,
       if (question != null) 'question': question,
       if (answer != null) 'answer': answer,
+      if (category != null) 'category': category,
+      if (isFavorite != null) 'is_favorite': isFavorite,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
     });
@@ -307,6 +398,8 @@ class FlashcardsTableCompanion extends UpdateCompanion<FlashcardRecord> {
     Value<int>? id,
     Value<String>? question,
     Value<String>? answer,
+    Value<String>? category,
+    Value<bool>? isFavorite,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
   }) {
@@ -314,6 +407,8 @@ class FlashcardsTableCompanion extends UpdateCompanion<FlashcardRecord> {
       id: id ?? this.id,
       question: question ?? this.question,
       answer: answer ?? this.answer,
+      category: category ?? this.category,
+      isFavorite: isFavorite ?? this.isFavorite,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -331,6 +426,12 @@ class FlashcardsTableCompanion extends UpdateCompanion<FlashcardRecord> {
     if (answer.present) {
       map['answer'] = Variable<String>(answer.value);
     }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
+    if (isFavorite.present) {
+      map['is_favorite'] = Variable<bool>(isFavorite.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -346,6 +447,8 @@ class FlashcardsTableCompanion extends UpdateCompanion<FlashcardRecord> {
           ..write('id: $id, ')
           ..write('question: $question, ')
           ..write('answer: $answer, ')
+          ..write('category: $category, ')
+          ..write('isFavorite: $isFavorite, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))

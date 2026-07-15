@@ -6,6 +6,7 @@ abstract final class AppStrings {
 
   static const String homeTitle = 'Home Screen';
   static const String studyTitle = 'Study Screen';
+  static const String statisticsTitle = 'Statistics';
   static const String addFlashcardTitle = 'Add Flashcard Screen';
   static const String editFlashcardTitle = 'Edit Flashcard Screen';
   static const String settingsTitle = 'Settings Screen';

@@ -89,10 +89,7 @@ abstract final class AppTheme {
           color: colorScheme.onSurface,
           fontWeight: FontWeight.w800,
         ),
-        iconTheme: IconThemeData(
-          color: colorScheme.onSurface,
-          size: 24,
-        ),
+        iconTheme: IconThemeData(color: colorScheme.onSurface, size: 24),
         actionsIconTheme: IconThemeData(
           color: colorScheme.onSurfaceVariant,
           size: 24,
@@ -101,7 +98,7 @@ abstract final class AppTheme {
       cardTheme: CardThemeData(
         color: colorScheme.surface,
         surfaceTintColor: colorScheme.surfaceTint,
-        elevation: 2,
+        elevation: 1.5,
         shadowColor: colorScheme.shadow.withValues(alpha: 0.12),
         margin: EdgeInsets.zero,
         shape: const RoundedRectangleBorder(
@@ -159,10 +156,10 @@ abstract final class AppTheme {
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        elevation: 4,
-        highlightElevation: 6,
-        backgroundColor: colorScheme.primaryContainer,
-        foregroundColor: colorScheme.onPrimaryContainer,
+        elevation: 6,
+        highlightElevation: 10,
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.large),
         ),
@@ -184,7 +181,7 @@ abstract final class AppTheme {
       ),
       inputDecorationTheme: InputDecorationThemeData(
         filled: true,
-        fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.48),
+        fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.55),
         border: inputBorder,
         enabledBorder: inputBorder,
         focusedBorder: inputBorder.copyWith(
